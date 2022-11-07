@@ -19,8 +19,8 @@ screen = pygame.display.set_mode(((width + margin) * n + margin, (height + margi
 pygame.display.set_caption('Lesta task')
 
 
-def creating_playing_field():
-    list_of_chips = [1, ] * 5 + [2, ] * 5 + [3, ] * 5   # список из фишек всех цветов (по 5 штук)
+def creating_playing_field() -> 'numpy.ndarray':
+    list_of_chips = [1, ] * 5 + [2, ] * 5 + [3, ] * 5  # список из фишек всех цветов (по 5 штук)
     grid = np.zeros((n + 1, n), dtype=int)
     grid[0] = [1, -2, 2, -2, 3]  # верхнее поле
     for row in range(1, n + 1):
@@ -35,7 +35,7 @@ def creating_playing_field():
     return grid
 
 
-def field_filling(grid):
+def field_filling(grid) -> 'numpy.ndarray':
     for row in range(n + 1):
         for column in range(n):
             x = width * column + (column + 1) * margin  # определение координат для клеток
@@ -58,8 +58,7 @@ def field_filling(grid):
                     screen.blit(yellow_circle, (x, y))
 
 
-
-def find_coordinates():  # нахождение координат нажатой клетки
+def find_coordinates() -> (int, int):  # нахождение координат нажатой клетки
     x_mouse, y_mouse = pygame.mouse.get_pos()  # считывание координат курсора
     column = x_mouse // (width + margin)  # перевод координат в номер столбца
     row = y_mouse // (height + margin)  # перевод координат в номер строки
@@ -68,21 +67,23 @@ def find_coordinates():  # нахождение координат нажато�
     return row, column
 
 
-def get_move(grid, row_start, column_start, row_end, column_end):  # это выглядит слишком длинно, я знаю
+def get_move(grid: 'numpy.ndarray', row_start: int, column_start: int, row_end: int,column_end: int) -> None:  # это выглядит слишком длинно, я знаю
     if (row_start, column_start) != (row_end, column_end) and None not in (row_start, column_start, row_end, column_end):  # проверка что мы двигаем на играбельную область
         if grid[row_start][column_start] in [1, 2, 3] and grid[row_end][column_end] == 0:  # еще одна проверка что мы взяли именно фишку и передвигаем ее в свообдное место
-            if abs(row_start - row_end) + abs(column_start - column_end) == 1:  # супер последняя проверка на то что перемещение происходит на соседнюю клетку
-                grid[row_start][column_start], grid[row_end][column_end] = grid[row_end][column_end], grid[row_start][column_start]
+            if abs(row_start - row_end) + abs(column_start - column_end) == 1:  # последняя проверка что перемещение происходит на соседнюю клетку
+                grid[row_start][column_start], grid[row_end][column_end] = grid[row_end][column_end], grid[row_start][
+                    column_start]
                 field_filling(grid)
 
 
-def check_winning(grid):  # проверка, собраны ли линии одноо цвета
+def check_winning(grid: 'numpy.ndarray') -> bool:  # проверка, собраны ли линии одноо цвета
     first_column = [grid[i][0] for i in range(1, n + 1)]
     third_column = [grid[i][2] for i in range(1, n + 1)]
     fifth_column = [grid[i][4] for i in range(1, n + 1)]
     if first_column.count(1) == third_column.count(2) == fifth_column.count(3) == 5:
         return True
     return False
+
 
 grid = creating_playing_field()
 running = True
