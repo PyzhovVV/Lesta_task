@@ -31,7 +31,6 @@ def creating_playing_field():
                 grid[row][column] = 0
             else:
                 grid[row][column] = list_of_chips.pop(rn.randint(0, len(list_of_chips) - 1))  # ячейки с фишками
-    print(grid)
     field_filling(grid)
     return grid
 
@@ -77,7 +76,7 @@ def get_move(grid, row_start, column_start, row_end, column_end):  # это вы
                 field_filling(grid)
 
 
-def check_winning(grid):
+def check_winning(grid):  # проверка, собраны ли линии одноо цвета
     first_column = [grid[i][0] for i in range(1, n + 1)]
     third_column = [grid[i][2] for i in range(1, n + 1)]
     fifth_column = [grid[i][4] for i in range(1, n + 1)]
@@ -98,11 +97,19 @@ while running:
         elif event.type == pygame.MOUSEBUTTONUP and not game_over:  # ситуация нажатия на клетку
             row_end, column_end = find_coordinates()
             print(row_start, column_start, row_end, column_end)
-            get_move(grid, row_start, column_start, row_end, column_end)
+            if max(column_start, column_end) < 5 and max(row_start, row_end) < 6:
+                get_move(grid, row_start, column_start, row_end, column_end)
             game_over = check_winning(grid)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:  # перезапуск игры нажатием пробела
+            screen.fill(black)
             game_over = False
             grid = creating_playing_field()
         if game_over:
-            ...
+            screen.fill(black)
+            font = pygame.font.SysFont('stxingkai', 60)
+            text1 = font.render("Ты виграл", True, white)
+            text_rect = text1.get_rect()
+            text_x = screen.get_width() / 2 - text_rect.width / 2  # нахождения геометрического центра
+            text_y = screen.get_height() / 2 - text_rect.height / 2  # нахождения геометрического центра
+            screen.blit(text1, [text_x, text_y])
         pygame.display.update()
